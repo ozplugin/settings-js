@@ -1,0 +1,320 @@
+@import "~bootstrap/scss/bootstrap";
+
+
+$gray-300: #D0D5DD;
+$gray-500: #667085;
+$gray-700: #344054;
+$gray-900: #101828;
+$shadow-normal: 0px 12px 16px -4px rgb(16 24 40 / 10%), 0px 4px 6px -2px rgb(16 24 40 / 5%);
+$shadow-sm: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
+$shadow-xs: 0px 1px 2px rgba(16, 24, 40, 0.05);
+$transition: all .3s ease;
+
+body {
+    &[class*="toplevel_page_book-appointment-online"] {
+        overflow: hidden;
+        .select2-container {
+            z-index: 99999;
+        }
+    }
+    
+}
+
+h6 {
+    color:$gray-900;
+}
+
+.text-muted {
+    color:$gray-500;
+}
+
+
+input[type=date], 
+input[type=datetime-local], 
+input[type=datetime], 
+input[type=email], 
+input[type=month], 
+input[type=number], 
+input[type=password], 
+input[type=search], 
+input[type=tel], 
+input[type=text], 
+input[type=time], 
+input[type=url], 
+input[type=week] {
+    &:not(.react-select__input)  {
+        background: #FFFFFF;
+        border: 1px solid $gray-300;
+        box-sizing: border-box;
+        box-shadow: $shadow-xs;
+        border-radius: 8px;
+        min-height: 44px;
+        transition: box-shadow .3s ease;
+        &:focus {
+            border-color: $gray-300;
+            box-shadow: $shadow-sm;
+            outline: 2px solid transparent;
+        }
+    }
+
+    &.form-control-sm {
+        min-height: calc(1.5em + 0.5rem + 2px);
+    }
+}
+
+.form-check-input {
+    &[type=checkbox], 
+    &[type=radio] {
+        box-shadow: $shadow-xs;
+        border: 1px solid $gray-300;
+        transition: box-shadow .3s ease background-position .15s ease-in-out;
+        position: relative;
+        top: 2px;
+        background-repeat: no-repeat;
+        &:focus {
+            border-color: $gray-300;
+            box-shadow: $shadow-sm;
+            outline: 2px solid transparent;
+        }
+
+        &:checked {
+            &::before {
+                display: none;
+            }
+        }
+    }
+}
+
+.option-wrap {
+    > * {
+        flex:1;
+        &:nth-child(n+2) {
+            margin-right:15px;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    .oz_step {
+        @media (max-width:576px) {
+            font-size: 11px;
+        }
+    }
+
+    .form-switch {
+        @media (max-width:576px) {
+            font-size: 20px;
+        }
+    }
+
+    &.with-additional {
+        > * {
+            margin-bottom:15px;
+            @media (min-width:577px) {
+                margin-right:15px;
+                margin-bottom:0px;   
+            }
+            &:last-child {
+                margin-right:0px;
+            }
+        }        
+    }
+}
+
+.react-select {
+    &__control {
+    box-shadow: $shadow-xs;
+    border: 1px solid $gray-300;
+    min-height: 44px;
+    transition: box-shadow .3s ease;
+    margin-bottom: .125rem;
+        &.react-select__control--is-focused, &:hover {
+            box-shadow: $shadow-sm;        
+            border-color: $gray-300 !important;
+        }
+    }
+
+    &__input {
+        border-color:transparent !important;
+        box-shadow: none !important;
+    }
+}
+
+
+.oz_admin_settings {
+    &-fixed {
+        // position: fixed;
+        // z-index: 99999;
+        // top: 0;
+        // left: 0;
+        // width: 100%;
+        // height: 100%;
+        // overflow: auto;
+        // background: #fff;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+    }
+    .bg-danger {
+        background-color: #FFFBFA !important;
+        border: 1px solid #FDA29B;
+        color: #B42318;
+        .btn-close {
+            color: #b42318;
+            width: 4px;
+            height: 4px;
+            &:focus {
+                box-shadow: none;
+            }
+        }
+        .toast-header {
+            color: #b42318;
+            border: 0px;
+            background: none;
+            padding-bottom: 0;
+        }
+        .oz-exclamation {
+            border: 1px solid;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            line-height: 15px;
+            text-align: center;
+        }
+    }
+
+    .form-control {
+        &-color {
+            max-width: 44px;
+            border-color: transparent;
+            background: none;
+            &:focus {
+                border-color: transparent;
+                box-shadow: none;
+                outline: 2px solid transparent;
+            }
+        }
+    }
+}
+
+.oz_sidebar {
+    &.list-group {
+        .list-group-item {
+            background: none;
+            border:0;
+            font-size: 14px;
+            line-height: 20px;
+            transition: $transition;
+            border-radius: 6px;
+            color: $gray-500;
+            &:hover, &.active {
+                box-shadow: $shadow-sm;
+                background-color: #fff;
+                color: $gray-700;
+            }
+        }
+    }
+}
+
+$cols: 1,2,3,4,6,8;
+@each $col in $cols {
+    .grid-columns-#{$col} {
+        grid-template-columns: repeat($col, 1fr);
+    }
+}
+
+.oz_repl-short-wrapper {
+max-height: 150px;
+overflow-y: auto;
+overflow-x: hidden;
+background: #fff;
+padding: 10px;
+margin: 10px 0;
+}
+
+.btn {
+    &.oz_loading {
+        &::after {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            width: 1em;
+            height: 1em;
+        }
+    }
+}
+
+.react-select__option-flag {
+    position: relative;
+    padding: 5px 10px;
+    font-size:1em;
+    cursor: pointer;
+        &:hover {
+            background-color: #deebff;
+        }
+        .flag {
+            position: relative;
+            display: inline-block;
+            margin-right: 5px;
+        }
+}
+
+.oz_switch-toggle-hide {
+    display: none !important;
+}
+
+.switch-toggler {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 10px;
+    line-height: 1;
+    cursor: pointer;
+    transform-origin: center;
+    transition: $transition;
+    opacity: .6;
+
+    &.open {
+        transform: rotate(180deg);
+        opacity: 1;
+    }
+}
+
+.oz_toast-wrapper {
+    position: fixed;
+    top:0;
+    right:15px;
+    .toast-container {
+        max-width: initial;
+    }
+}
+
+.nav-tabs {
+    .nav-item {
+        margin-bottom:0;
+
+        .nav-link {
+            &.oz_tab {
+                &-underline {
+                    padding: 12px 0;
+                    margin-right: 20px;
+                    background-color: transparent;
+                    border: 0;
+                    color: var(--bs-secondary);
+                    border-radius: 0;
+                    border-bottom: 2px solid transparent;
+                }
+            }
+            &.active, &:hover {
+                background-color: transparent;
+                border: 0;
+                border-radius: 0;
+                color: var(--bs-blue);
+                border-bottom: 2px solid var(--bs-blue);            
+            }
+        }
+    }
+}
