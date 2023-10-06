@@ -1,9 +1,9 @@
 const request = async (params = {}) => {
     let body = new URLSearchParams();
     Object.entries(params).map(param => body.set(param[0], param[1]))
-    body.set('_wpnonce', ozdon_vars.nonce)
+    body.set('_wpnonce', ozplugin_vars.nonce)
     try {
-    let res = await (await fetch(ozdon_vars.ajax_url, {
+    let res = await (await fetch(ozplugin_vars.adminAjax, {
         method: 'post',
         body
     })).json()

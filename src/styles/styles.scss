@@ -5,6 +5,7 @@ $gray-300: #D0D5DD;
 $gray-500: #667085;
 $gray-700: #344054;
 $gray-900: #101828;
+$warning: #ffc107;
 $shadow-normal: 0px 12px 16px -4px rgb(16 24 40 / 10%), 0px 4px 6px -2px rgb(16 24 40 / 5%);
 $shadow-sm: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
 $shadow-xs: 0px 1px 2px rgba(16, 24, 40, 0.05);
@@ -13,36 +14,44 @@ $transition: all .3s ease;
 body {
     &[class*="toplevel_page_book-appointment-online"] {
         overflow: hidden;
+
         .select2-container {
             z-index: 99999;
         }
     }
-    
+
 }
 
 h6 {
-    color:$gray-900;
+    color: $gray-900;
 }
 
-.text-muted {
-    color:$gray-500;
+.text {
+    &-muted {
+        color: $gray-500;
+    }
+
+    &-italic {
+        font-style: italic;
+    }
 }
 
 
-input[type=date], 
-input[type=datetime-local], 
-input[type=datetime], 
-input[type=email], 
-input[type=month], 
-input[type=number], 
-input[type=password], 
-input[type=search], 
-input[type=tel], 
-input[type=text], 
-input[type=time], 
-input[type=url], 
+
+input[type=date],
+input[type=datetime-local],
+input[type=datetime],
+input[type=email],
+input[type=month],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=tel],
+input[type=text],
+input[type=time],
+input[type=url],
 input[type=week] {
-    &:not(.react-select__input)  {
+    &:not(.react-select__input) {
         background: #FFFFFF;
         border: 1px solid $gray-300;
         box-sizing: border-box;
@@ -50,6 +59,7 @@ input[type=week] {
         border-radius: 8px;
         min-height: 44px;
         transition: box-shadow .3s ease;
+
         &:focus {
             border-color: $gray-300;
             box-shadow: $shadow-sm;
@@ -63,7 +73,8 @@ input[type=week] {
 }
 
 .form-check-input {
-    &[type=checkbox], 
+
+    &[type=checkbox],
     &[type=radio] {
         box-shadow: $shadow-xs;
         border: 1px solid $gray-300;
@@ -71,6 +82,7 @@ input[type=week] {
         position: relative;
         top: 2px;
         background-repeat: no-repeat;
+
         &:focus {
             border-color: $gray-300;
             box-shadow: $shadow-sm;
@@ -86,11 +98,13 @@ input[type=week] {
 }
 
 .option-wrap {
-    > * {
-        flex:1;
+    >* {
+        flex: 1;
+
         &:nth-child(n+2) {
-            margin-right:15px;
+            margin-right: 15px;
         }
+
         &:last-child {
             margin-right: 0;
         }
@@ -109,34 +123,38 @@ input[type=week] {
     }
 
     &.with-additional {
-        > * {
-            margin-bottom:15px;
+        >* {
+            margin-bottom: 15px;
+
             @media (min-width:577px) {
-                margin-right:15px;
-                margin-bottom:0px;   
+                margin-right: 15px;
+                margin-bottom: 0px;
             }
+
             &:last-child {
-                margin-right:0px;
+                margin-right: 0px;
             }
-        }        
+        }
     }
 }
 
 .react-select {
     &__control {
-    box-shadow: $shadow-xs;
-    border: 1px solid $gray-300;
-    min-height: 44px;
-    transition: box-shadow .3s ease;
-    margin-bottom: .125rem;
-        &.react-select__control--is-focused, &:hover {
-            box-shadow: $shadow-sm;        
+        box-shadow: $shadow-xs;
+        border: 1px solid $gray-300;
+        min-height: 44px;
+        transition: box-shadow .3s ease;
+        margin-bottom: .125rem;
+
+        &.react-select__control--is-focused,
+        &:hover {
+            box-shadow: $shadow-sm;
             border-color: $gray-300 !important;
         }
     }
 
     &__input {
-        border-color:transparent !important;
+        border-color: transparent !important;
         box-shadow: none !important;
     }
 }
@@ -158,24 +176,29 @@ input[type=week] {
         display: flex;
         align-items: center;
     }
+
     .bg-danger {
         background-color: #FFFBFA !important;
         border: 1px solid #FDA29B;
         color: #B42318;
+
         .btn-close {
             color: #b42318;
             width: 4px;
             height: 4px;
+
             &:focus {
                 box-shadow: none;
             }
         }
+
         .toast-header {
             color: #b42318;
             border: 0px;
             background: none;
             padding-bottom: 0;
         }
+
         .oz-exclamation {
             border: 1px solid;
             width: 20px;
@@ -191,6 +214,7 @@ input[type=week] {
             max-width: 44px;
             border-color: transparent;
             background: none;
+
             &:focus {
                 border-color: transparent;
                 box-shadow: none;
@@ -204,13 +228,15 @@ input[type=week] {
     &.list-group {
         .list-group-item {
             background: none;
-            border:0;
+            border: 0;
             font-size: 14px;
             line-height: 20px;
             transition: $transition;
             border-radius: 6px;
             color: $gray-500;
-            &:hover, &.active {
+
+            &:hover,
+            &.active {
                 box-shadow: $shadow-sm;
                 background-color: #fff;
                 color: $gray-700;
@@ -219,7 +245,8 @@ input[type=week] {
     }
 }
 
-$cols: 1,2,3,4,6,8;
+$cols: 1, 2, 3, 4, 6, 8;
+
 @each $col in $cols {
     .grid-columns-#{$col} {
         grid-template-columns: repeat($col, 1fr);
@@ -227,22 +254,29 @@ $cols: 1,2,3,4,6,8;
 }
 
 .oz_repl-short-wrapper {
-max-height: 150px;
-overflow-y: auto;
-overflow-x: hidden;
-background: #fff;
-padding: 10px;
-margin: 10px 0;
+    max-height: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #fff;
+    padding: 10px;
+    margin: 10px 0;
 }
 
 .btn {
-    &.oz_loading {
+    &.ozplugin_loading {
         &::after {
+            content: '';
             position: relative;
             display: inline-block;
             margin-left: 5px;
+            top: 0.1em;
             width: 1em;
             height: 1em;
+            border: 3px solid $warning;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
         }
     }
 }
@@ -250,16 +284,18 @@ margin: 10px 0;
 .react-select__option-flag {
     position: relative;
     padding: 5px 10px;
-    font-size:1em;
+    font-size: 1em;
     cursor: pointer;
-        &:hover {
-            background-color: #deebff;
-        }
-        .flag {
-            position: relative;
-            display: inline-block;
-            margin-right: 5px;
-        }
+
+    &:hover {
+        background-color: #deebff;
+    }
+
+    .flag {
+        position: relative;
+        display: inline-block;
+        margin-right: 5px;
+    }
 }
 
 .oz_switch-toggle-hide {
@@ -285,8 +321,9 @@ margin: 10px 0;
 
 .oz_toast-wrapper {
     position: fixed;
-    top:0;
-    right:15px;
+    top: 0;
+    right: 15px;
+
     .toast-container {
         max-width: initial;
     }
@@ -294,7 +331,7 @@ margin: 10px 0;
 
 .nav-tabs {
     .nav-item {
-        margin-bottom:0;
+        margin-bottom: 0;
 
         .nav-link {
             &.oz_tab {
@@ -308,13 +345,228 @@ margin: 10px 0;
                     border-bottom: 2px solid transparent;
                 }
             }
-            &.active, &:hover {
+
+            &.active,
+            &:hover {
                 background-color: transparent;
                 border: 0;
                 border-radius: 0;
                 color: var(--bs-blue);
-                border-bottom: 2px solid var(--bs-blue);            
+                border-bottom: 2px solid var(--bs-blue);
             }
         }
+    }
+}
+
+.ozplugin-table {
+    &.isLoading {
+        tbody {
+            animation: opacity .3s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+
+            td {
+                color: transparent;
+                position: relative;
+
+                &:before {
+                    content: "";
+                    display: table;
+                    position: absolute;
+                    top: 25%;
+                    left: 0%;
+                    width: 60%;
+                    height: 50%;
+                    background-color: rgb(85 89 103 / 26%);
+                    border-radius: 6px;
+                }
+
+                &:nth-child(1) {
+                    &::before {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 2px;
+                    }
+                }
+            }
+        }
+    }
+
+    th {
+        font-size: 11px;
+        line-height: 20px;
+        text-transform: uppercase;
+        color: #555967;
+        border-bottom: 1px solid #d0d2d8 !important;
+        border-top: 1px solid #d0d2d8 !important;
+        padding: 10px 2px;
+    }
+}
+
+
+.oz_loading {
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 40px;
+
+    div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        margin: 4px;
+        border: 4px solid #ffd759;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #ffd759 transparent transparent transparent;
+
+        &:nth-child(1) {
+            animation-delay: -0.45s;
+        }
+
+        &:nth-child(2) {
+            animation-delay: -0.3s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: -0.15s;
+        }
+    }
+}
+
+.ozdon_ {
+    &text-right {
+        text-align: right;
+    }
+}
+
+.ozplugin_sidebar {
+    &-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: none;
+
+        &.active {
+            .ozplugin_sidebar-shadow {
+                opacity: 1;
+            }
+
+            .ozplugin_sidebar {
+                transform: translateX(0%);
+            }
+        }
+    }
+
+    position: fixed;
+    top: 0;
+    right: 0;
+    transform: translateX(200%);
+    transition: transform .3s ease;
+    width: 100%;
+    max-width: 450px;
+    background: #fff;
+    height: 100%;
+    overflow: auto;
+    padding: 20px;
+    box-shadow: -4px 4px 10px 3px rgba(0, 0, 0, 0.1);
+
+    &-shadow {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background-color: rgb(16 24 40 / 15%);
+        opacity: 0;
+        transform: $transition;
+    }
+
+    &-header {
+        display: flex;
+        padding: 10px 0;
+    }
+
+    &-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+}
+
+.ozplugin_close {
+    margin-left: auto;
+    opacity: 0.6;
+    transition: $transition;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.ozplugin_tr {
+    cursor: pointer;
+    transition: background .3s ease;
+    font-size: 14px;
+    color: #4b4e53;
+
+    &:hover {
+        background-color: #eceff8;
+    }
+}
+
+.ozplugin_search-icon {
+    padding: 0 8px;
+    width: 32px;
+    height: auto;
+    line-height: 1em;
+    cursor: pointer;
+    transition: $transition;
+    opacity: 0.6;
+
+    svg {
+        max-width: 100%;
+        height: auto;
+        stroke: #cccccc;
+    }
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+
+}
+
+@keyframes opacity {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }
