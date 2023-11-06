@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Col, Form, FormCheck, FormControl, ListGroup, ListGroupItem, Row, Overlay, Tooltip } from 'react-bootstrap';
+import { Card, Col, Form, FormCheck, FormControl, ListGroup, ListGroupItem, Row, Overlay, Tooltip, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -7,6 +7,8 @@ import 'react-phone-input-2/lib/style.css'
 import store from '../../store'
 import { request, selectText } from '../functions/functions';
 import sanitize from 'sanitize-html';
+import ReactDatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 const toCamelCased = (string) => {
     return string.replace(/-([a-z])/gi, function (s, group1) {
@@ -14,7 +16,7 @@ const toCamelCased = (string) => {
     });
 }
 
-const saveOption = async (option) => {
+const SaveOption = async (option) => {
     const dispatch = store.dispatch
     dispatch({ type: 'LOADING', payload: true })
     try {
@@ -113,6 +115,12 @@ const getField = (option, props = {}) => {
         case 'text':
             tpl = <OptionText {...props} option={option} />
             break;
+        case 'internal_link':
+            tpl = <OptionInternalLink {...props} option={option} />
+            break;
+        case 'date':
+            tpl = <OptionDate {...props} option={option} />
+            break;
     }
     if (title) {
         tpl = <>
@@ -121,7 +129,7 @@ const getField = (option, props = {}) => {
             {tpl}
         </>
     }
-    return (<div style={style} className={`oz_optionWrapper option-${option.name}`}>{tpl}<small class="text-muted text-italic px-1">{option.description}</small></div>);
+    return (<div style={style} className={`oz_optionWrapper option-${option.name}`}>{tpl}{option.description && <small class="text-muted text-italic px-1">{option.description}</small>}</div>);
 }
 
 const OptionText = ({ option }) => {
@@ -195,7 +203,7 @@ const OptionSwitch = (props) => {
     const isToggle = option?.toggle || false
     const dispatch = useDispatch()
     const Ref = useRef()
-    const saveOption = props.saveOption || saveOption
+    const saveOption = props.saveOption || SaveOption
 
     const [Collapsed, setCollapsed] = useState('')
 
@@ -272,7 +280,8 @@ const OptionHTML = (props) => {
     const loading = useSelector(state => state.loading)
     const onload = useSelector(state => state.app.onload)
     const [TinyChanging, setTinyChanging] = useState(false)
-    const saveOption = props.saveOption || saveOption
+    const [StopSetContentOnLoad, setStopSetContentOnLoad] = useState(true)
+    const saveOption = props.saveOption || SaveOption
 
     const parseForm = (e) => {
         e.target.classList.add('disabled')
@@ -336,6 +345,10 @@ const OptionHTML = (props) => {
         let id = e.target.id
         if (!window.tinyMCE.get(id)) return
         if (TinyChanging) return
+        if (StopSetContentOnLoad) {
+            setStopSetContentOnLoad(false);
+            return
+        }
         setTinyChanging(true)
         saveOption({
             name: option.name,
@@ -408,7 +421,7 @@ const OptionInput = (props) => {
     const [Timer, setTimer] = useState(false)
     const [Value, setValue] = useState(option.value)
     const [FirstRender, setFirstRender] = useState(true)
-    const saveOption = props.saveOption || saveOption
+    const saveOption = props.saveOption || SaveOption
     const Ref = useRef(null)
     const onChange = (e) => {
         setTimer(true)
@@ -473,7 +486,7 @@ const OptionTextarea = (props) => {
     const [Timer, setTimer] = useState(false)
     const [Value, setValue] = useState(option.value)
     const [FirstRender, setFirstRender] = useState(true)
-    const saveOption = props.saveOption || saveOption
+    const saveOption = props.saveOption || SaveOption
     const Ref = useRef(null)
     const onChange = (e) => {
         setTimer(true)
@@ -537,7 +550,7 @@ const OptionTextarea = (props) => {
 const OptionSelect = (props) => {
     const option = props.option
     const options = option.values
-    const saveOption = props.saveOption || saveOption
+    const saveOption = props.saveOption || SaveOption
     const selectRef = useRef(null)
     let defValue = '';
     // 09/30/23 commented it. don't remember why should use this condition
@@ -632,7 +645,7 @@ const OptionSelect = (props) => {
 
 const OptionCheckbox = (props) => {
     const option = props.option
-    const saveOption = props.saveOption || saveOption
+    const saveOption = props.saveOption || SaveOption
 
     const onChange = (e) => {
         let name = e.target.name
@@ -681,7 +694,7 @@ const OptionCheckbox = (props) => {
 
 const OptionColor = (props) => {
     const option = props.option
-    const saveOption = props.saveOption || saveOption
+    const saveOption = props.saveOption || SaveOption
 
     const onBlur = (e) => {
         let name = e.target.name
@@ -702,6 +715,80 @@ const OptionColor = (props) => {
             onBlur={onBlur}
         />
     )
+}
+
+const OptionInternalLink = (props) => {
+    const option = props.option
+    const dispatch = useDispatch();
+    const Key = useSelector(state => state.app.activeTab);
+    const filter = useSelector(state => state.app.filter)
+    const post = useSelector(state => state.app.post)
+    const app = useSelector(state => state.app)
+    const moveTo = () => {
+        if (Key != option.name) {
+            if (option?.params) {
+                if (option.params?.filter) {
+                    let newFilter = typeof filter[option.name] != 'undefined' ? filter[option.name] : []
+                    option.params?.filter.map(params => {
+                        // todo make other variable types
+                        if (params.value.indexOf('{ID}') > -1) {
+                            params.value = post.id
+                        }
+                        let newFil = params
+                        if (!params.value)
+                            newFilter = newFilter.filter(el => el.filter != params.name)
+                        else {
+                            let hasFil = newFilter.filter(el => el.filter == params.name)
+                            if (hasFil.length)
+                                newFilter = newFilter.map(el => {
+                                    if (el.filter == params.name) {
+                                        el = newFil
+                                    }
+                                    return el
+                                })
+                            else
+                                newFilter = [...newFilter, newFil]
+                        }
+                    })
+                    filter[option.name] = newFilter
+                    dispatch({ type: 'SET_FILTER', payload: filter })
+                    dispatch({ type: 'UPDATE_POSTS', payload: true })
+                }
+            }
+            dispatch({ type: 'CLOSE_POPUP' });
+            dispatch({
+                type: 'ACTIVE_TAB',
+                payload: option.name
+            })
+        }
+    }
+    return (
+        <Button onClick={moveTo} variant='link'>Link</Button>
+    )
+}
+
+const OptionDate = (props) => {
+    const option = props.option
+    const saveOption = props.saveOption || SaveOption
+    let isValid = (new Date(option.value)).getTime() > 0;
+    let def = option.value && isValid ? new Date(option.value * 1000) : new Date()
+    const [startDate, setStartDate] = useState(def);
+    const onChange = (date) => {
+        setStartDate(date)
+        let name = option.name
+        let value = date / 1000
+        let param = {
+            name,
+            value,
+            type: 'int'
+        }
+        saveOption(param)
+    }
+    return (<ReactDatePicker
+        selected={startDate}
+        showTimeSelect
+        dateFormat={ozplugin_vars.datetimeFormat}
+        onChange={onChange} />)
 }
 
 const OptionRow = (props) => {
@@ -727,8 +814,10 @@ const OptionRow = (props) => {
     }
 
     useEffect(() => {
-        if (isToggle)
-            Ref.current.classList.add('oz_switch-toggle-hide')
+        //todo replace this crutch
+        setTimeout(() => {
+            //Ref.current.classList.add('oz_switch-toggle-hide')
+        }, 150)
     }, [])
 
     return (

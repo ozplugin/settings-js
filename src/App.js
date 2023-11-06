@@ -13,10 +13,8 @@ export default function App(props) {
   const dispatch = useDispatch()
 
 
-
-  const Key = useSelector(state => state.app.activeTab) || Object.keys(ozplugin_vars.settings.pages)[0];
-
   const sections = ozplugin_vars.settings.pages;
+  const Key = useSelector(state => state.app.activeTab) || Object.keys(sections)[0];
 
   const setKey = (payload) => {
     dispatch({
@@ -83,7 +81,10 @@ export default function App(props) {
                       tpl = <Settings settings={section[1].tabs} />
                       break;
                     case 'posts':
-                      tpl = <Posts settings={{...section[1], id: section[0] }} />
+                      tpl = <Posts settings={{ ...section[1], id: section[0] }} />
+                      break;
+                    case 'users':
+                      tpl = <Posts settings={{ ...section[1], id: section[0] }} />
                       break;
                   }
                 }

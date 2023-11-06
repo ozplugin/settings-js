@@ -9,12 +9,14 @@ export default function app(state = {
     post: false,
     update_posts: false,
     need_update: false,
+    filter: {},
 },action) {
     switch(action.type) {
         case 'ONLOAD':  return {...state, onload: true} 
         case 'OPEN_POPUP':  return {...state, popup: true} 
         case 'CLOSE_POPUP':  return {...state, popup: false} 
         case 'SET_POST':  return {...state, post: action.payload} 
+        case 'SET_FILTER':  return {...state, filter: action.payload} 
         case 'EDIT_POST':  return {...state, post: {...state.post, edit_post: action.payload}} 
         case 'DELETE_RESTORE_POST': 
         case 'DELETE_POST':  return {...state, popup: false, update_posts: true} 

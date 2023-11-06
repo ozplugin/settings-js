@@ -8,6 +8,7 @@ import Option from './Option/Option';
 import Toasts from './Toasts';
 
 export default function Post(props) {
+    const settings = props.settings
     const IsOpen = useSelector(state => state.app.popup)
     const loading = useSelector(state => state.app.loading)
     const activeTab = useSelector(state => state.app.activeTab)
@@ -29,11 +30,18 @@ export default function Post(props) {
     const getPost = async () => {
         if (post.id) {
             dispatch({ type: 'LOADING', payload: true })
-            let res = await request({
+            let params = {
                 'action': 'ozplugin_get_post',
-                'post_type': post.post_type,
                 'ID': post.id,
-            })
+            }
+            if (settings.view.type == 'posts') {
+                params['post_type'] = settings.view.post_type;
+            }
+            else if (settings.view.type == 'users') {
+                params['role'] = settings.view.role;
+
+            }
+            let res = await request(params)
             dispatch({ type: 'LOADING', payload: false })
 
             if (res && res.success) {
@@ -46,13 +54,24 @@ export default function Post(props) {
         setIsLoaded(true)
     }
 
-    const saveForm = async () => {
+    const saveForm = async (e) => {
+        let action = 'ozplugin_save_post';
         let fields = post.edit_post.map(el => el.fields).flat();
+        if (settings.view.type == 'users') {
+            action = 'ozplugin_save_user';
+        }
+        if (e.target) {
+            e.target.classList.add('ozplugin_loading')
+        }
         let res = await request({
-            action: 'ozplugin_save_post',
+            action,
             payload: JSON.stringify(fields),
             post_type: post.post_type
         })
+
+        if (e.target) {
+            e.target.classList.remove('ozplugin_loading')
+        }
 
         if (res.success) {
             dispatch({ type: 'SET_POST_ID', payload: res.payload })
@@ -63,14 +82,18 @@ export default function Post(props) {
     }
 
     const deletePost = async (e) => {
+        let action = 'ozplugin_delete_post';
+        if (settings.view.type == 'users') {
+            action = 'ozplugin_delete_user';
+        }
         if (e.target) {
             e.target.classList.add('ozplugin_loading')
         }
         let res = await request({
-            action: 'ozplugin_delete_post',
+            action,
             ID: post.id
         })
-  
+
         if (e.target) {
             e.target.classList.remove('ozplugin_loading')
         }
@@ -125,6 +148,11 @@ export default function Post(props) {
             return false;
         }
 
+        let action = 'ozplugin_save_post_data';
+        if (settings.view.type == 'users') {
+            action = 'ozplugin_save_user_data';
+        }
+
         let option = post.edit_post.map(el => el.fields.filter(el => el.name == val.name)).flat();
 
         if (option.length) {
@@ -134,7 +162,7 @@ export default function Post(props) {
                 ...{
                     ...val,
                     ID: post.id,
-                    action: 'ozplugin_save_post_data'
+                    action
                 }
             }
             let res = await request(option)
@@ -153,15 +181,18 @@ export default function Post(props) {
 
 
     useEffect(() => {
-        if (props.settings.id != activeTab) return;
         if (!IsOpen) {
-            popup.current.classList.remove('active')
-            setIsLoaded(false)
-            setTimeout(() => {
-                popup.current.style.display = 'none'
-            }, 150)
+            if (popup.current) {
+                popup.current.classList.remove('active')
+                setIsLoaded(false)
+                setTimeout(() => {
+                    popup.current.style.display = 'none'
+                }, 150)
+            }
         }
-        else {
+        if (props.settings.id != activeTab) return;
+
+        if (IsOpen) {
             getPost(post.id)
             popup.current.style.display = 'block'
             setTimeout(() => {
@@ -192,8 +223,8 @@ export default function Post(props) {
                         {IsLoaded ?
                             <>
                                 {!post.id && <Button onClick={saveForm}>Save</Button>}
-                                {(post.id && post.post_status == 'publish') && <Button onClick={deletePost} variant='danger'>Delete</Button>}
-                                {(post.id && post.post_status != 'publish') && <Button onClick={restorePost} variant='danger'>Restore</Button>}
+                                {(post.id && (post?.post_status == 'publish' || !post?.post_status)) && <Button onClick={deletePost} variant='danger'>Delete</Button>}
+                                {(post.id && post?.post_status && post?.post_status != 'publish') && <Button onClick={restorePost} variant='danger'>Restore</Button>}
                             </>
                             : ''
                         }

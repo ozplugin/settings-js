@@ -5,14 +5,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loading from './Loading';
 import { request } from './functions/functions';
 import Post from './Post';
+import Option from './Option/Option';
+import Filter from './Filter';
 
 export default function Posts(props) {
     const settings = props.settings
     const dispatch = useDispatch()
     const app = useSelector(state => state.app)
     const post = useSelector(state => state.app.post)
+    const filter = useSelector(state => state.app.filter)
     const update_posts = useSelector(state => state.app.update_posts)
-    let cols_th = settings.view?.columns && Object.keys(settings.view.columns).length ? Object.entries(settings.view.columns).map(el => el[1].name) : ['Name', 'Date']
+    let cols_th = settings.view?.columns && Object.keys(settings.view.columns).length ? Object.entries(settings.view.columns).map(el => el[1]) : [{col:'post_title', name:'Name'}, {col:'post_date', name:'Date'}]
     const [Tr, setTr] = useState([])
     const [Page, setPage] = useState(0)
     const [LastPage, setLastPage] = useState(false)
@@ -26,12 +29,22 @@ export default function Posts(props) {
         setNotFound(false)
         setLoading(true)
         dispatch({ type: 'UPDATE_POSTS', payload: false })
-        let res = await request({
+        let params = {
             'action': 'ozplugin_get_table',
-            'post_type': settings.view.post_type,
             'columns': JSON.stringify(settings.view.columns),
-            'args': JSON.stringify({ ...settings.view.args, paged: Page, post_status: opts?.post_type ? opts?.post_type : (PostStatus || 'publish') })
-        })
+        }
+        if (settings.view.type == 'posts') {
+            params['post_type'] = settings.view.post_type;
+            params['args'] = JSON.stringify({ ...settings.view.args, paged: Page, post_status: opts?.post_type ? opts?.post_type : (PostStatus || 'publish') });
+            params['filter'] = typeof filter[app.activeTab] != 'undefined' ? JSON.stringify(filter[app.activeTab]) : null;
+        }
+        else if (settings.view.type == 'users') {
+            params['role'] = settings.view.role;
+            params['args'] = JSON.stringify({ ...settings.view.args, paged: Page });
+            params['filter'] = typeof filter[app.activeTab] != 'undefined' ? JSON.stringify(filter[app.activeTab]) : null;
+
+        }
+        let res = await request(params)
         setLoading(false)
         if (!res.success) {
             setNotFound(true);
@@ -65,6 +78,20 @@ export default function Posts(props) {
         setPostStatus('trash')
     }
 
+    const set_post = (post = null) => {
+        let data = {
+            edit_post: settings.view.edit_post
+        }
+        if (settings.view.type == 'posts') {
+            data['post_type'] = settings.view.post_type;
+        }
+        else if ( settings.view.type == 'users') {
+            data['role'] = settings.view.role;
+
+        }
+        dispatch({ type: 'SET_POST', payload: { ...post, ...data } })
+    }
+
     const addNew = () => {
         dispatch({ type: 'OPEN_POPUP' })
         dispatch({ type: 'SET_POST', payload: { post_type: settings.view.post_type, edit_post: settings.view.edit_post } })
@@ -72,7 +99,7 @@ export default function Posts(props) {
 
     const getPost = (post) => {
         dispatch({ type: 'OPEN_POPUP' })
-        dispatch({ type: 'SET_POST', payload: { ...post, post_type: settings.view.post_type, edit_post: settings.view.edit_post } })
+        set_post(post)
     }
 
     const nextPage = async () => {
@@ -121,27 +148,28 @@ export default function Posts(props) {
         }
     }, [update_posts])
 
-    if (NotFound)
-        return (<div>Not found</div>)
-
     return (
         <>
             <div class="ozplugin_navigation pb-3">
-                <div class="ozplugin_navigation_wrap d-flex">
-                    <Button onClick={addNew} size="sm">+ {ozplugin_lang.addnew}</Button>
+                <div class="ozplugin_navigation_wrap d-flex w-100 align-items-center">
+                {settings.view.type == 'posts' && <Button onClick={addNew} size="sm">+ {ozplugin_lang.addnew}</Button>}
+                    {settings.view?.filter && <Filter settings={settings}/>}
+                    {settings.view.type == 'posts' &&
                     <ButtonGroup className="ms-auto">
                         <Button onClick={showAll} disabled={PostStatus != 'trash'} variant='link' size="sm">Published {(Found && PostStatus != 'trash') ? `(${Found})` : ''}</Button>
                         <Button onClick={showTrash} disabled={PostStatus == 'trash'} variant='link' size="sm">Trashed {(Found && PostStatus == 'trash') ? `(${Found})` : ''}</Button>
                     </ButtonGroup>
+                    }
                 </div>
             </div>
+            {!NotFound ?
             <div class={`ozplugin-table ${Loading ? 'isLoading' : ''}`}>
                 <Table size="sm">
                     <thead>
                         <tr>
                             <th></th>
                             {cols_th.map(col => {
-                                return <th>{col}</th>
+                                return <th data-meta={col.col}>{col.name}</th>
                             })}
                         </tr>
                     </thead>
@@ -167,6 +195,7 @@ export default function Posts(props) {
                     </tfoot>
                 </Table>
             </div>
+            : <div>Not found</div>}
             <Post {...props} />
         </>
     )
